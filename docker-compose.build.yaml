@@ -1,0 +1,11 @@
+version: "3.0"
+services:
+  urescom:
+    image: ghcr.io/gunet/urescom:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - urescom-base
+  urescom-base:
+    image: ghcr.io/gunet/urescom-base:latest

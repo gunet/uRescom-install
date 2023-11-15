@@ -1,0 +1,55 @@
+version: "3.0"
+services:
+  urescom:
+    environment:
+      - URESCOM_TESING=1
+      - URESCOM_SQL_HOST=mssql
+      - URESCOM_SQL_USER=SA
+      - URESCOM_SQL_PASSWORD=OurStrongPassword00
+      - URESCOM_SQL_DATABASE=tempdb
+      - URESCOM_SQL_TRUST_CERT=yes
+      - URESCOM_CAS_HOSTNAME=localhost
+      - URESCOM_CAS_PORT=8443
+      - URESCOM_CAS_CONTEXT=/cas
+    depends_on:
+      - sso
+      - mssql
+    volumes:
+      - ./test:/var/www/urescom/test
+  mssql:
+    image: ghcr.io/gunet/urescom-mssql:latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=OurStrongPassword00
+      - MSSQL_PID=Express
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 10
+  mssql-init:
+    image: ghcr.io/gunet/urescom-mssql:latest
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      - URESCOM_SQL_SERVER=mssql
+      - MSSQL_SA_PASSWORD=OurStrongPassword00
+    command: /docker-entrypoint-initdb.d/init_db.sh
+  ldap:
+    image: gunet/simple-ldap
+    environment:
+      - TZ=Europe/Athens
+    restart: unless-stopped
+  sso:
+    image: gunet/simple-cas
+    ports:
+      - "8443:8443"
+    depends_on:
+      - ldap
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Athens
+      - LDAP_URL=ldap://ldap:1389
+      - CAS_SERVER_NAME=${CAS_SERVER_NAME:-https://localhost:8443}

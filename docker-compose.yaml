@@ -1,0 +1,45 @@
+version: "3.0"
+services:
+  urescom:
+    image: ghcr.io/gunet/urescom:latest
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      db:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "25m"
+        max-file: "2"
+  db:
+    image: ghcr.io/gunet/urescom-mariadb:latest
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "25m"
+        max-file: "2"
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=urescom
+      - MYSQL_USER=urescom
+      - MYSQL_PASSWORD=secret
+      - TZ=Europe/Athens
+    command:
+      - --innodb-buffer-pool-size=120M
+      - --innodb_flush_log_at_trx_commit=2
+      - --wait-timeout=86400
+      - --max_allowed_packet=67108864
+    healthcheck:
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e 'show databases;' | grep -q $$MYSQL_DATABASE || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  db_data:
