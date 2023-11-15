@@ -104,6 +104,9 @@ institution ή γνωρίζουμε ότι υπάρχει διαθέσιμη ν�
 βάσης δεδομένων θα παραμείνει.
 * `./urescom_admin.sh up` για να ανέβει ξανά το stack. Η εντολή είναι χρήσιμη σε περίπτωση που έχουμε κάνει down ή σε
 περίπτωση που αλλάξουμε κάτι στο αρχείο `variables.env`
+* `./urescom_admin.sh bash` για να ανοίξει bash shell στο container. Η εγκατάσταση του uRescom βρίσκεται στο φάκελο
+`/var/www/urescom` που θα είναι και working directory του shell. Σημειώνουμε ότι ο container έχει εγκατεστημένο `vi`
+ενώ είναι δυνατή η on the fly εγκατάσταση Debian πακέτων με `apt-get update && apt-get install -y <package name>`
 
 Σημειώνεται ότι κατά το pull των Docker images το script θα παραπονεθεί για `error` σε ότι αφορά το image του `uRescom`.
 Δε χρειάζεται να ανησυχούμε καθώς αυτό γίνεται build τοπικά.
