@@ -108,6 +108,8 @@ institution ή γνωρίζουμε ότι υπάρχει διαθέσιμη ν�
 * `./urescom_admin.sh bash` για να ανοίξει bash shell στο container. Η εγκατάσταση του uRescom βρίσκεται στο φάκελο
 `/var/www/urescom` που θα είναι και working directory του shell. Σημειώνουμε ότι ο container έχει εγκατεστημένο `vi`
 ενώ είναι δυνατή η on the fly εγκατάσταση Debian πακέτων με `apt-get update && apt-get install -y <package name>`
+* `./urescom_admin.sh remove` για να αφαιρεθούν εντελώς τόσο τα containers (που πρώτα θα κατέβουν αν εκτελούνται) όσο και
+τα Docker images ώστε ο διαχειριστής να μπορεί να ξεκινήσει από το μηδέν αν το επιθυμεί.
 
 Σημειώνεται ότι κατά το pull των Docker images το script θα παραπονεθεί για `error` σε ότι αφορά το image του `uRescom`.
 Δε χρειάζεται να ανησυχούμε καθώς αυτό γίνεται build τοπικά.

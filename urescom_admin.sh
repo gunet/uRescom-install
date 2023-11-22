@@ -25,6 +25,7 @@ help () {
 	echo "logs-f		Show uRescom logs with -f flag (last 20 lines)"
 	echo "prune		Prune Docker images not needed"
 	echo "recreate	Pull base images, build uRescom and run 'docker compose up -d'"
+	echo "remove		Remove containers AND images to be able to start over (calls down with the --rmi all option)"
 	echo "restart		Restart uRescom service (Important: env variables in the container are NOT changed)"
 	echo "start		Start uRescom service"
 	echo "status		Show status"
@@ -92,6 +93,10 @@ recreate)
 	${COMPOSE} ${TEST_CONFIG} pull --ignore-pull-failures
 	echo -e "${BOLD}Docker Compose up..${NC}"
 	${COMPOSE} ${TEST_CONFIG} up -d
+	;;
+remove)
+	echo -e "${BOLD}Docker Compose Down and RMI (remove images)..${NC}"
+	${COMPOSE} ${TEST_CONFIG} down --rmi all
 	;;
 restart)
 	echo -e "${BOLD}Docker Compose restart uRescom..${NC}"
