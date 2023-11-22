@@ -38,7 +38,7 @@ services:
       test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e 'show databases;' | grep -q $$MYSQL_DATABASE || exit 1
       interval: 10s
       timeout: 3s
-      retries: 3
+      retries: 10
       start_period: 10s
 
 volumes:

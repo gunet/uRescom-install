@@ -41,6 +41,10 @@
 Host και απαιτείται απλά να είναι plain vanilla Linux (προτείνεται Debian) με εγκατεστημένο
 το Docker (παρέχεται κατάλληλο script για την εγκατάσταση αυτή).
 
+Για ευκολότερη εγκατάσταση η GUNet παρέχει Docker image για τη δημιουργία installation CD (ISO image)
+`Just Enough OS` βασισμένου σε Debian bullseye. To public repo βρίσκεται [εδώ](https://github.com/gunet/JeOS/) (περιλαμβάνονται οδηγίες)
+ενώ το Docker image είναι το `ghcr.io/gunet/jeos-builder:latest`
+
 Η λειτουργία της υπηρεσίας βασίζεται σε ένα Docker Compose stack με τα ακόλουθα στοιχεία:
 * `uRescom` βασισμένο σε Apache+FPM και PHP (με τα κατάλληλα modules επικοινωνίας με βάσεις)
 * `MariaDB` SQL βάση δεδομένων
@@ -124,6 +128,8 @@ debugging στα logs
 * `gunetdemo/gunetdemo`
 
 ## Ανάγκες υλικού
+### JeOS
+Οι ανάγκες του JeOS που παρέχει η GUNet στο δίσκο είναι περίπου `3.5 GB`
 ### Βασική υπηρεσία
 * Χώρος στο δίσκο: `1.3GB`
     - uRescom: `660MB`
