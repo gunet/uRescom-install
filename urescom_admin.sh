@@ -17,6 +17,7 @@ help () {
 	echo "Available commands:"
 	echo "bash		Give a bash prompt on the uRescom server"
 	echo "config		Show docker compose complete config"
+	echo "destroy	Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
 	echo "df		Show disk space consumed by images/containers/volumes"
 	echo "down	Down Docker compose stack"
 	echo "images		Show Docker images"
@@ -53,7 +54,10 @@ config)
 	echo -e "${BOLD}Docker Compose Config..${NC}"
 	${COMPOSE} ${TEST_CONFIG} config
 	;;
-
+destroy)
+	echo -e "${BOLD}Docker Compose Remove everything (containers, images and volumes)..${NC}"
+	${COMPOSE} ${TEST_CONFIG} down --rmi all --volumes
+	;;
 df)
 	docker system df
 	;;
