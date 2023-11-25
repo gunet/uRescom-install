@@ -2,7 +2,7 @@ version: "3.0"
 services:
   urescom:
     environment:
-      - URESCOM_TESING=1
+      - URESCOM_TESTING=1
       - URESCOM_SQL_HOST=mssql
       - URESCOM_SQL_USER=SA
       - URESCOM_SQL_PASSWORD=OurStrongPassword00
