@@ -92,7 +92,7 @@ if ($config_arr["authmethod"] == "basic") {
     );
 
     // Only in testing
-    if (isset($_ENV['URESCOM_TESING'])) {
+    if (isset($_ENV['URESCOM_TESTING'])) {
       $cas_allowed_usernames_arr =
       array(
         'test', 'gunetdemo'
