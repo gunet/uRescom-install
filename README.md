@@ -131,9 +131,14 @@ institution ή γνωρίζουμε ότι υπάρχει διαθέσιμη ν�
 Η υπηρεσία σε δοκιμαστικό περιβάλλον θα είναι διαθέσιμη στη σελίδα `https://localhost` ενώ ενεργοποιείται
 debugging στα logs
 
+#### SSO usernames
 Για δοκιμές μπορούν να χρησιμοποιηθούν τα username/password:
 * `test/test`
 * `gunetdemo/gunetdemo`
+#### Rescom E-mails
+Για δοκιμές μπορούν να γίνουν αναζητήσεις (και αλλαγές) με τα ακόλουθα e-mails:
+* `28487@example.com`
+* `5271@example.com`
 
 ## Ανάγκες υλικού
 ### JeOS
