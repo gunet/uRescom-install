@@ -75,7 +75,7 @@ $config_arr["add_group_search_arr"] = ["vsrr__v_vd_hrms", "vkva__v_vd_hrms"];
 // Δυνατές τιμές:
 // 1: Ενεργό
 // 0: Ανενεργό
-$config_arr['debug'] = 1;
+$config_arr['debug'] = ($_ENV['URESCOM_DEBUG'] == 'yes');
 
 
 if ($config_arr["authmethod"] == "basic") {
