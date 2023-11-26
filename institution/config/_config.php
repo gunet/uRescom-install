@@ -1,6 +1,4 @@
 <?php
-//ΜΕΤΟΝΟΜΑΣΤΕ ΑΥΤΟ ΤΟ ΑΡΧΕΙΟ ΣΕ config.php
-
 $config_arr = array();
 
 //Το αλλάζουμε αν θέλουμε να καθαρίσουμε την cache των css, javascript
@@ -16,15 +14,15 @@ $config_arr["institution_mailpart"] = '@' . $_ENV['URESCOM_DOMAIN'];
 //μήνες, τότε για το διάστημα των x μηνών λαμβάνει το χαρακτηρισμό interim
 $config_arr["interim_limit_backwards"] = "1";
 
+//Αν ένας συνεργάτης έχει σύμβαση που έχει λήξει x=interim_limit_forward μήνες
+//πριν, τότε για το διάστημα των x μηνών λαμβάνει το χαρακτηρισμό interim
+$config_arr["interim_limit_forward"] = "3";
+
 //Αν η εφαρμογή τρέχει από τη ρίζα του ιστοτόπου αφήνουμε κενό
 //Διαφορετικά, π.χ. αν τρέχει από υποφάκελο app, τότε βάζουμε app/
 //Σημείωση: Στην περίπτωση υποφακέλου, τότε απαιτείται και το τελικό /
 //όπως στο παράδειγμα
 $config_arr["webroot"] = "";
-
-//Αν ένας συνεργάτης έχει σύμβαση που έχει λήξει x=interim_limit_forward μήνες
-//πριν, τότε για το διάστημα των x μηνών λαμβάνει το χαρακτηρισμό interim
-$config_arr["interim_limit_forward"] = "3";
 
 //Η διαδρομή (εκτός public html του autoload.php μετά την εγκατάσταση
 //των πακέτων του composer.json), π.χ. εντός του libraries
@@ -69,7 +67,7 @@ $config_arr["bridgedb_dbname"] = $_ENV['URESCOM_MARIADB_DATABASE'];
 $config_arr["bridgedb_port"] = "3306";
 
 //Πίνακες βασικών αναζητήσεων
-$config_arr["add_group_search_arr"] = ["vsrr__v_vd_hrms", "vkva__v_vd_hrms"];
+$config_arr["add_group_search_arr"] = [];
 
 //Ενεργοποίηση debugging (στα logs)
 // Δυνατές τιμές:
@@ -77,12 +75,14 @@ $config_arr["add_group_search_arr"] = ["vsrr__v_vd_hrms", "vkva__v_vd_hrms"];
 // 0: Ανενεργό
 $config_arr['debug'] = ($_ENV['URESCOM_DEBUG'] == 'yes');
 
+//Εντοπίζουμε αν η php έχει εκτελεστεί από κονσόλα (δηλαδή είναι cron εκτέλεση)
+$global_consolecron = (php_sapi_name() == 'cli');
 
-if ($config_arr["authmethod"] == "basic") {
+if (!$global_consolecron && $config_arr["authmethod"] == "basic") {
   $config_arr["basicauth_login_credentials"] = array(
     //"onomachristi" => "synthimatiko",
   );
-} else if ($config_arr["authmethod"] == "cas") {
+} else if (!$global_consolecron && $config_arr["authmethod"] == "cas") {
   ///////////// ΡΥΘΜΙΣΕΙΣ CAS ///////////
 
   //Τα ονόματα των χρηστών (από CAS) που έχουν δικαίωμα διαχείρισης
@@ -96,7 +96,7 @@ if ($config_arr["authmethod"] == "basic") {
       $cas_allowed_usernames_arr =
       array(
         'test', 'gunetdemo'
-      );      
+      );
     }
 
   // Full Hostname of your CAS Server
