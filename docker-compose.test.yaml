@@ -17,6 +17,20 @@ services:
       - mssql
     volumes:
       - ./test:/var/www/urescom/test
+  urescom-cron:
+    environment:
+      - URESCOM_TESTING=1
+      - URESCOM_SITE=${URESCOM_SITE:-https://localhost}
+      - URESCOM_SQL_HOST=mssql
+      - URESCOM_SQL_USER=SA
+      - URESCOM_SQL_PASSWORD=OurStrongPassword00
+      - URESCOM_SQL_DATABASE=tempdb
+      - URESCOM_SQL_TRUST_CERT=yes
+    depends_on:
+      db:
+        condition: service_healthy
+      mssql:
+        condition: service_healthy
   mssql:
     image: ghcr.io/gunet/urescom-mssql:latest
     environment:
