@@ -3,6 +3,7 @@ services:
   urescom:
     environment:
       - URESCOM_TESTING=1
+      - URESCOM_DEBUG=yes
       - URESCOM_SQL_HOST=mssql
       - URESCOM_SQL_USER=SA
       - URESCOM_SQL_PASSWORD=OurStrongPassword00
@@ -43,7 +44,7 @@ services:
       - TZ=Europe/Athens
     restart: unless-stopped
   sso:
-    image: gunet/simple-cas
+    image: gunet/simple-cas:tomcat
     ports:
       - "8443:8443"
     depends_on:
