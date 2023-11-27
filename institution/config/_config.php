@@ -29,11 +29,6 @@ $config_arr["webroot"] = "";
 //οπότε: "../ibrescom_offline/libraries/vendor/autoload.php"
 $config_arr["vendor_path_autoload"] = "libraries/vendor/autoload.php";
 
-//Στον παρακάτω φάκελο αποθηκεύονται τα αποτελέσματα εκτέλεσης των
-//χρονοπρογραμματισμένων εργασιών. Αποθηκεύονται συνολικά 30 αρχεία και μετά
-//γίνεται επανεγγραφή τους, π.χ. "../ibrescom_offline/crons/"
-$config_arr["cron_output_folder"] = "___________________";
-
 //1 = Γίνεται υποχρεωτικά ανακατεύθυνση σε https
 //0 = μη υποχρεωτική ανακατεύθυνση
 $config_arr["require_https"] = 1;
