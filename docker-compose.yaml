@@ -2,6 +2,7 @@ version: "3.0"
 services:
   urescom:
     image: ghcr.io/gunet/urescom:latest
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
@@ -15,6 +16,7 @@ services:
         max-file: "2"
   urescom-cron:
     image: ghcr.io/gunet/urescom:latest
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
