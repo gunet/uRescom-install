@@ -31,6 +31,8 @@ services:
         condition: service_healthy
       mssql:
         condition: service_healthy
+      mssql-init:
+        condition: service_started
   mssql:
     image: ghcr.io/gunet/urescom-mssql:latest
     environment:
