@@ -17,14 +17,15 @@ help () {
 	echo "Available commands:"
 	echo "bash		Give a bash prompt on the uRescom server"
 	echo "config		Show docker compose complete config"
-	echo "destroy	Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
+	echo "destroy		Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
 	echo "df		Show disk space consumed by images/containers/volumes"
-	echo "down	Down Docker compose stack"
+	echo "down		Down Docker compose stack"
 	echo "images		Show Docker images"
 	echo "logs		Show uRescom logs (last 40 lines). You can add an optional argument to set a different # of lines to show"
 	echo "logs-all	Show all uRescom logs (since container started)"
 	echo "logs-f		Show uRescom logs with -f flag (last 20 lines)"
 	echo "prune		Prune Docker images not needed"
+	echo "ps		Show running services"
 	echo "recreate	Pull base images, build uRescom and run 'docker compose up -d'"
 	echo "remove		Remove containers AND images to be able to start over (calls down with the --rmi all option)"
 	echo "restart		Restart uRescom service (Important: env variables in the container are NOT changed)"
@@ -87,6 +88,10 @@ logs-f)
 prune)
 	echo -e "${BOLD}Docker image prune..${NC}"
 	docker image prune -f
+	;;
+ps)
+	echo -e "${BOLD}Active services..${NC}"
+	${COMPOSE} ${TEST_CONFIG} ps
 	;;
 recreate)
 	echo -e "${BOLD}Docker Compose pull uResocm base..${NC}"
