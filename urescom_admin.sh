@@ -133,7 +133,6 @@ up)
 	;;
 version)
 	echo -n "Version number: "
-	set -x
 	VERSION=$(docker image inspect ${IMAGE}:latest|grep pushdate| awk '{print $2}'|tr -d '",')
 	echo -e "${BOLD}$VERSION ${NC}"
 	;;
