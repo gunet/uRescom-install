@@ -15,6 +15,7 @@ help () {
 	echo "ie URESCOM_TESTING=1 $0 recreate"
 	echo ""
 	echo "Available commands:"
+	echo "backup [dst]	Backup MariaDB to <dst> or if <dst> is not provided to /var/tmp/urescom.sql"
 	echo "bash		Give a bash prompt on the uRescom server"
 	echo "config		Show docker compose complete config"
 	echo "destroy		Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
@@ -47,6 +48,15 @@ if [[ $# -eq 0 ]]; then
 fi
 
 case $1 in
+backup)
+	BACKUP=/var/tmp/urescom.sql
+	if [[ $# -eq 2 ]]; then
+		BACKUP=$2
+	fi
+	echo -e "${BOLD}Backing up MariaDB to ${BACKUP}..${NC}"
+	docker run --rm --network urescom-install_default ghcr.io/gunet/urescom-mariadb mysqldump --host=db --user=urescom --password=secret urescom >${BACKUP}
+	echo "Finished!"
+	;;
 bash)
 	echo "Opening bash prompt.."
 	docker exec -it urescom-install_urescom_1 bash
