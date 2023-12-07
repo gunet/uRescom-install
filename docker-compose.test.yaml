@@ -3,6 +3,7 @@ services:
   urescom:
     environment:
       - URESCOM_TESTING=1
+      - URESCOM_DEBUG=yes
       - URESCOM_SITE=${URESCOM_SITE:-https://localhost}
       - URESCOM_SQL_HOST=mssql
       - URESCOM_SQL_USER=SA
@@ -59,6 +60,9 @@ services:
       timeout: 3s
       start_period: 10s
       retries: 10
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.20
   mssql-init:
     image: ghcr.io/gunet/urescom-mssql:latest
     depends_on:
@@ -68,11 +72,17 @@ services:
       - URESCOM_SQL_SERVER=mssql
       - MSSQL_SA_PASSWORD=OurStrongPassword00
     command: /docker-entrypoint-initdb.d/init_db.sh
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.21
   ldap:
     image: gunet/simple-ldap
     environment:
       - TZ=Europe/Athens
     restart: unless-stopped
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.22
   sso:
     image: gunet/simple-cas:tomcat
     ports:
@@ -85,3 +95,6 @@ services:
       - TZ=Europe/Athens
       - LDAP_URL=ldap://ldap:1389
       - CAS_SERVER_NAME=${CAS_SERVER_NAME:-https://localhost:8443}
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.23

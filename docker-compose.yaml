@@ -1,7 +1,39 @@
 version: "3.0"
 services:
+  proxy:
+    image: traefik:v2.10
+    command:
+      # Entrypoints configuration
+      - --entrypoints.mariadb.address=:3306
+      # Docker provider configuration
+      - --providers.docker=true
+      # Makes sure that services have to explicitly direct Traefik to expose them
+      - --providers.docker.exposedbydefault=false
+      # Logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
+      - --log.level=debug
+      # Enable the ping entrypoint in order to have healthcheck
+      - --ping
+      # Enable accesslog and use the correct timezone
+      - --accesslog=true
+      - --accesslog.fields.names.StartUTC=drop
+    ports:
+      - 3306:3306
+    environment:
+      - TZ=Europe/Athens
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.5
+    healthcheck:
+      test: wget -q -O - http://localhost:8080/ping|grep -q OK || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 2
+      start_period: 3s
+    restart: unless-stopped
   urescom:
-    image: ghcr.io/gunet/urescom:latest
+    image: ghcr.io/gunet/urescom-base:latest
     restart: unless-stopped
     ports:
       - 80:80
@@ -16,8 +48,16 @@ services:
       options:
         max-size: "25m"
         max-file: "2"
+    volumes:
+      - ./institution/config/_config.php:/var/www/urescom/_config.php:ro
+      - ./institution/certs/privkey.pem:/etc/ssl/private/privkey.pem:ro
+      - ./institution/certs/server.crt:/etc/ssl/certs/server.crt:ro
+      - ./institution/config/acl.conf:/etc/apache2/acl.conf:ro
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.10
   urescom-cron:
-    image: ghcr.io/gunet/urescom:latest
+    image: ghcr.io/gunet/urescom-base:latest
     restart: unless-stopped
     depends_on:
       db:
@@ -30,6 +70,11 @@ services:
       options:
         max-size: "25m"
         max-file: "2"
+    volumes:
+      - ./institution/config/_config.php:/var/www/urescom/_config.php:ro
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.11
   db:
     image: ghcr.io/gunet/urescom-mariadb:latest
     restart: unless-stopped
@@ -38,25 +83,56 @@ services:
       options:
         max-size: "25m"
         max-file: "2"
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.db.entrypoints=mariadb
+      # Allow connections from:
+      #  * idm-gw IPs
+      #  * GUNet main network
+      - traefik.tcp.routers.db.rule=ClientIP(`83.212.6.5`, `83.212.6.166`, `195.134.100.24/24`)
+      - traefik.tcp.services.db.loadbalancer.server.port=3306
+      - traefik.tcp.services.db.loadbalancer.proxyProtocol.version=2
     volumes:
       - db_data:/var/lib/mysql
+      - ./institution/certs:/certs:ro
+    env_file:
+      - variables.env
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=urescom
-      - MYSQL_USER=urescom
-      - MYSQL_PASSWORD=secret
+      - URESCOM_IPADDR=172.16.238.10
+      - URESCOM_CRON_IPADDR=172.16.238.11
       - TZ=Europe/Athens
     command:
       - --innodb-buffer-pool-size=120M
       - --innodb_flush_log_at_trx_commit=2
       - --wait-timeout=86400
       - --max_allowed_packet=67108864
+      # The IP of the MariaDB proxy
+      # We enable the Proxy2 protocol to be able to receive
+      # the real client IP
+      - --proxy-protocol-networks=172.16.238.5
+      # Enable TLS
+      - --ssl_cert=/certs/server.crt
+      - --ssl_key=/certs/privkey.pem
+      - --ssl_ca=/certs/server.crt
     healthcheck:
       test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e 'show databases;' | grep -q $$MYSQL_DATABASE || exit 1
       interval: 10s
       timeout: 3s
       retries: 10
       start_period: 10s
+    depends_on:
+      proxy:
+        condition: service_healthy
+    networks:
+      urescom_network:
+        ipv4_address: 172.16.238.12
 
 volumes:
   db_data:
+
+networks:
+  urescom_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
