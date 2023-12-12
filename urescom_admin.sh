@@ -15,27 +15,28 @@ help () {
 	echo "ie URESCOM_TESTING=1 $0 recreate"
 	echo ""
 	echo "Available commands:"
-	echo "backup [dst]	Backup MariaDB to <dst> or if <dst> is not provided to /var/tmp/urescom.sql"
-	echo "bash		Give a bash prompt on the uRescom server"
-	echo "config		Show docker compose complete config"
-	echo "destroy		Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
-	echo "df		Show disk space consumed by images/containers/volumes"
-	echo "down		Down Docker compose stack"
-	echo "images		Show Docker images"
-	echo "logs		Show uRescom logs (last 40 lines). You can add an optional argument to set a different # of lines to show"
-	echo "logs-all	Show all uRescom logs (since container started)"
-	echo "logs-f		Show uRescom logs with -f flag (last 20 lines)"
-	echo "prune		Prune Docker images not needed"
-	echo "ps		Show running services"
-	echo "recreate	Pull images and run 'docker compose up -d'"
-	echo "remove		Remove containers AND images to be able to start over (calls down with the --rmi all option)"
-	echo "restart		Restart uRescom service (Important: env variables in the container are NOT changed)"
-	echo "start		Start uRescom service"
-	echo "status		Show status"
-	echo "stop		Stop uRescom service (docker compose stop)"
-	echo "up		Docker compose up (usually if we have changed the env file)"
-	echo "version		Show pusdate label for institution image (acts as version)"
-	echo "volume		Show volume stats (to gauge space used by MariaDB)"
+	echo "backup [dst]		Backup MariaDB to <dst> or if <dst> is not provided to /var/tmp/urescom.sql"
+	echo "bash						Give a bash prompt on the uRescom server"
+	echo "config					Show docker compose complete config"
+	echo "destroy					Remove EVERYTHING: containers, images and volumes (used by MariaDB). Totally destructive!"
+	echo "df							Show disk space consumed by images/containers/volumes"
+	echo "down						Down Docker compose stack"
+	echo "images					Show Docker images"
+	echo "logs						Show uRescom logs (last 40 lines). You can add an optional argument to set a different # of lines to show"
+	echo "logs-all				Show all uRescom logs (since container started)"
+	echo "logs-f					Show uRescom logs with -f flag (last 20 lines)"
+	echo "prune						Prune Docker images not needed"
+	echo "ps							Show running services"
+	echo "recreate				Pull images and run 'docker compose up -d'"
+	echo "remove					Remove containers AND images to be able to start over (calls down with the --rmi all option)"
+	echo "restart					Restart uRescom service (Important: env variables in the container are NOT changed)"
+	echo "start						Start uRescom service"
+	echo "status					Show status"
+	echo "stop						Stop uRescom service (docker compose stop)"
+	echo "test						Check that the admin has actually setup a production level environment"
+	echo "up				 			Docker compose up (usually if we have changed the env file)"
+	echo "version					Show pusdate label for institution image (acts as version)"
+	echo "volume					Show volume stats (to gauge space used by MariaDB)"
 	exit 1
 }
 
@@ -132,6 +133,30 @@ status)
 stop)
 	echo -e "${BOLD}Docker Compose stop..${NC}"
 	${COMPOSE} ${TEST_CONFIG} stop
+	;;
+test)
+	echo -e "${BOLD}Checking environemnt variables..${NC}"
+	source variables.env
+	if [[ ${URESCOM_SITE} == "https://localhost" ]]; then
+		echo "Variable URESCOM_SITE has not been set"
+		exit 1
+	elif [[ ${URESCOM_SQL_HOST} == "mssql" ]]; then
+		echo "MSSQL (Rescom) DB variables have not been set"
+		exit 1
+	elif [[ ${URESCOM_CAS_HOSTNAM} == "localhost" ]]; then
+		echo "CAS server has not been set"
+		exit 1
+	elif [[ ${VDUSER_PASSWORD} == "secret" ]]; then
+		echo "vduser password has not been set"
+		exit 1
+	fi
+	echo -e "${BOLD}Checking certificate..${NC}"
+	openssl x509 -subject -noout -in institution/certs/server.crt |grep ^subject|grep -q urescom.gunet.gr
+	if [[ $? -eq 0 ]]; then
+		echo "Certificate is issued to urescom.gunet.gr, not a production server"
+		exit 1
+	fi
+	echo -e "${BOLD}Tests finished..${NC}"
 	;;
 up)
 	echo -e "${BOLD}Docker Compose up..${NC}"
