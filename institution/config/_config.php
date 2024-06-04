@@ -10,6 +10,9 @@ $config_arr["installation_date"] = "INSTALLATION_DATE";
 //Συνήθης κατάληξη των ιδρυματικών e-mails π.χ. @todomainsas.gr
 $config_arr["institution_mailpart"] = '@' . $_ENV['URESCOM_DOMAIN'];
 
+//"NULL" ή 'personnel' (ΠΡΟΣΟΧΗ: στο personnel θέλει και τα μονά εισαγωγικά)
+$config_arr["staffTypeDefault"] = "'personnel'";
+
 //Αν ένας συνεργάτης έχει σύμβαση που ξεκινάει σε x=interim_limit_backwards
 //μήνες, τότε για το διάστημα των x μηνών λαμβάνει το χαρακτηρισμό interim
 $config_arr["interim_limit_backwards"] = "1";
