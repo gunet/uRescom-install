@@ -4,8 +4,8 @@ $config_arr = array();
 //Το αλλάζουμε αν θέλουμε να καθαρίσουμε την cache των css, javascript
 $config_arr["cachetimestamp"] = "20221210_154513";
 
-//ημερομηνία εγκατάστασης στη μορφή YYYY-MM-DD (set by docker build)
-$config_arr["installation_date"] = "INSTALLATION_DATE";
+//ημερομηνία εγκατάστασης στη μορφή YYYY-MM-DD
+$config_arr["installation_date"] = "2024-06-01";
 
 //Συνήθης κατάληξη των ιδρυματικών e-mails π.χ. @todomainsas.gr
 $config_arr["institution_mailpart"] = '@' . $_ENV['URESCOM_DOMAIN'];
